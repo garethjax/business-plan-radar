@@ -88,6 +88,23 @@ footer{text-align:center;font-size:11px;color:var(--text-hint);margin-top:1.5rem
     <input type="file" id="file-import" accept="application/json,.json" hidden>
     <span class="toast" id="toast"></span>
   </div>
+  <div id="user-bar" style="display:flex;align-items:center;gap:8px;margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border);">
+    <label for="username" style="font-family:var(--mono);font-size:11px;color:var(--text-hint);letter-spacing:0.1em;text-transform:uppercase;">Operatore</label>
+    <input id="username" type="text" maxlength="50" placeholder="Il tuo nome"
+      style="font-family:var(--sans);font-size:14px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);width:200px;outline:none;">
+    <span id="user-badge" style="display:none;font-size:13px;color:var(--text-muted);"></span>
+  </div>
+  <div style="margin-top:0.75rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+    <button id="share-btn" onclick="shareSnapshot()"
+      style="font-family:var(--mono);font-size:12px;padding:8px 16px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);cursor:pointer;letter-spacing:0.05em;">
+      🔗 Condividi
+    </button>
+    <div id="share-feedback" style="display:none;">
+      <input id="share-link" type="text" readonly
+        style="font-family:var(--mono);font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);width:320px;color:var(--text);background:var(--surface2);">
+      <span id="share-msg" style="font-size:12px;color:var(--good);margin-left:6px;"></span>
+    </div>
+  </div>
 </header>
 
 <div class="sec">
@@ -160,6 +177,7 @@ footer{text-align:center;font-size:11px;color:var(--text-hint);margin-top:1.5rem
 
 <script>
 let ay=1;
+let currentSnapshotId=null;
 const ids=['ppp','loc','comp','compp','gem','gemp','rr1','dir','rrg2','rrg3','renew','renewpct','cf','cv','an','web','sw','acc','mk','mi'];
 ids.forEach(id=>document.getElementById(id).addEventListener('input',upd));
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{ay=+b.dataset.y;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',+t.dataset.y===ay));upd();}));
@@ -420,6 +438,118 @@ function renderCritique(yrs){
     html+='<p><span class="pill '+pc+'">'+pl+'</span>'+o.m+'</p>';
   });
   document.getElementById('critbox').innerHTML=html;
+}
+
+// --- Username ---
+const userEl=document.getElementById('username');
+const userBadge=document.getElementById('user-badge');
+
+function loadUsername(){
+  const saved=localStorage.getItem('bpr:username');
+  if(saved) userEl.value=saved;
+}
+userEl.addEventListener('change',()=>{
+  const name=userEl.value.trim();
+  if(name) localStorage.setItem('bpr:username',name);
+});
+loadUsername();
+
+// --- Auto-save ---
+let autosaveTimer=null;
+const AUTOSAVE_DELAY=15000;
+
+function collectSettings(){
+  return Object.fromEntries(ids.map(id=>[id,g(id)]));
+}
+
+function scheduleAutosave(){
+  clearTimeout(autosaveTimer);
+  // If modifying a shared snapshot, detach from it
+  if(currentSnapshotId){
+    currentSnapshotId=null;
+    userBadge.style.display='none';
+    history.replaceState(null,'',window.location.pathname);
+  }
+  autosaveTimer=setTimeout(()=>{
+    try{
+      const source=currentSnapshotId?'snapshot-modified':'draft';
+      localStorage.setItem('bpr:autosave',JSON.stringify(collectSettings()));
+      localStorage.setItem('bpr:autosave-source',source);
+    }catch(e){console.warn('Auto-save failed:',e);}
+  },AUTOSAVE_DELAY);
+}
+
+// Hook into existing upd() to trigger autosave on slider change
+const _origUpd=upd;
+upd=function(){_origUpd();scheduleAutosave();};
+
+// --- Restore state ---
+(function restoreState(){
+  const params=new URLSearchParams(window.location.search);
+  const snapshotId=params.get('id');
+  if(snapshotId){
+    fetch('/api/snapshots/'+snapshotId)
+      .then(r=>{if(!r.ok)throw new Error('Not found');return r.json();})
+      .then(data=>{
+        applySettings(data.settings);
+        currentSnapshotId=snapshotId;
+        userBadge.textContent='📋 Snapshot di '+data.name;
+        userBadge.style.display='inline';
+        toast('Scenario caricato da link condiviso');
+      })
+      .catch(()=>{
+        toast('Snapshot non trovato — valori default');
+        restoreLocalAutosave();
+      });
+  }else{
+    restoreLocalAutosave();
+  }
+})();
+
+function restoreLocalAutosave(){
+  try{
+    const saved=localStorage.getItem('bpr:autosave');
+    if(saved){applySettings(JSON.parse(saved));toast('Sessione locale ripristinata');}
+  }catch(e){console.warn('Auto-restore failed:',e);}
+}
+
+// --- Share ---
+async function shareSnapshot(){
+  const name=userEl.value.trim();
+  if(!name){toast('Inserisci il tuo nome prima di condividere');userEl.focus();return;}
+  const btn=document.getElementById('share-btn');
+  btn.disabled=true;btn.textContent='⏳ Creazione...';
+  try{
+    const resp=await fetch('/api/snapshots',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name,settings:collectSettings()})
+    });
+    if(!resp.ok) throw new Error('Server error');
+    const data=await resp.json();
+    const url=window.location.origin+'/?id='+data.id;
+    currentSnapshotId=data.id;
+    history.replaceState(null,'','/?id='+data.id);
+    userBadge.textContent='📋 Snapshot di '+name;
+    userBadge.style.display='inline';
+    const feedbackDiv=document.getElementById('share-feedback');
+    const linkInput=document.getElementById('share-link');
+    const msgEl=document.getElementById('share-msg');
+    feedbackDiv.style.display='inline-flex';
+    linkInput.value=url;
+    try{
+      await navigator.clipboard.writeText(url);
+      msgEl.textContent='✅ Link copiato!';
+    }catch(e){
+      msgEl.textContent='📋 Seleziona e copia il link';
+      linkInput.select();
+    }
+    toast('Link creato!');
+  }catch(e){
+    toast('Impossibile creare link. Riprova.');
+    console.error('Share failed:',e);
+  }finally{
+    btn.disabled=false;btn.textContent='🔗 Condividi';
+  }
 }
 
 upd();
