@@ -586,10 +586,10 @@ async function shareSnapshot(){
   const btn=document.getElementById('share-btn');
   btn.disabled=true;btn.textContent='⏳ Creazione...';
   try{
+    const notesVal=getNotes();
     const resp=await fetch('/api/snapshots',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      const notesVal=getNotes();
-    body:JSON.stringify({name:name,settings:collectSettings(),...(notesVal?{notes:notesVal}:{})})
+      body:JSON.stringify({name:name,settings:collectSettings(),...(notesVal?{notes:notesVal}:{})})
     });
     if(!resp.ok) throw new Error('Server error');
     const data=await resp.json();
