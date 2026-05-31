@@ -117,19 +117,15 @@ footer{text-align:center;font-size:11px;color:var(--text-hint);margin-top:1.5rem
 </header>
 
 <!-- Notes block -->
-<div id="notes-block" style="margin-top:1rem;">
-  <div id="notes-toggle" onclick="toggleNotes()" style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 0;">
-    <span style="font-family:var(--mono);font-size:12px;color:var(--text-muted);">📝 Note</span>
-    <span id="notes-preview" style="font-size:13px;color:var(--text-hint);white-space:pre-wrap;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-height:2.6em;line-height:1.3em;flex:1;"></span>
-    <span id="notes-arrow" style="font-size:11px;color:var(--text-hint);">▼</span>
+<div id="notes-block" style="margin-top:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--text-hint);letter-spacing:0.1em;text-transform:uppercase;">📝 Note</span>
+    <button id="notes-detail-btn" onclick="toggleNotes()" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text-muted);cursor:pointer;">Dettaglio note ▼</button>
   </div>
-  <div id="notes-editor" style="display:none;">
-    <textarea id="notes-textarea" maxlength="8192" placeholder="Aggiungi note, appunti, contesto da condividere..."
-      style="width:100%;min-height:120px;font-family:var(--sans);font-size:14px;line-height:1.5;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);resize:vertical;outline:none;"></textarea>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
-      <span id="notes-counter" style="font-family:var(--mono);font-size:11px;color:var(--text-hint);">0/8192</span>
-      <span onclick="toggleNotes()" style="font-family:var(--mono);font-size:11px;color:var(--text-muted);cursor:pointer;">▲ Comprimi</span>
-    </div>
+  <textarea id="notes-textarea" maxlength="8192" placeholder="Aggiungi note, appunti, contesto da condividere..."
+    style="width:100%;height:3em;font-family:var(--sans);font-size:14px;line-height:1.5;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);resize:vertical;outline:none;"></textarea>
+  <div id="notes-footer" style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+    <span id="notes-counter" style="font-family:var(--mono);font-size:11px;color:var(--text-hint);">0/8192</span>
   </div>
 </div>
 
@@ -224,7 +220,6 @@ function getNotes(){return document.getElementById('notes-textarea').value;}
 function setNotes(text){
   document.getElementById('notes-textarea').value=text||'';
   updateNotesCounter();
-  updateNotesPreview();
 }
 
 function exportScenario(){
@@ -501,11 +496,12 @@ function collectSettings(){
 let notesExpanded=false;
 function toggleNotes(){
   notesExpanded=!notesExpanded;
-  document.getElementById('notes-editor').style.display=notesExpanded?'block':'none';
-  document.getElementById('notes-preview').style.display=notesExpanded?'none':'-webkit-box';
-  document.getElementById('notes-arrow').textContent=notesExpanded?'▲':'▼';
-  if(notesExpanded)updateNotesCounter();
-  else updateNotesPreview();
+  const ta=document.getElementById('notes-textarea');
+  const btn=document.getElementById('notes-detail-btn');
+  ta.style.height=notesExpanded?'120px':'3em';
+  ta.style.overflow=notesExpanded?'auto':'hidden';
+  btn.textContent=notesExpanded?'Dettaglio note ▲':'Dettaglio note ▼';
+  updateNotesCounter();
 }
 function updateNotesCounter(){
   const ta=document.getElementById('notes-textarea');
@@ -513,10 +509,6 @@ function updateNotesCounter(){
   const len=new Blob([ta.value]).size;
   c.textContent=len+'/8192';
   c.style.color=len>7000?(len>=8192?'#d32f2f':'#BA7517'):'var(--text-hint)';
-}
-function updateNotesPreview(){
-  const prev=document.getElementById('notes-preview');
-  prev.textContent=getNotes()||'(vuote)';
 }
 document.getElementById('notes-textarea').addEventListener('input',()=>{
   updateNotesCounter();
@@ -555,7 +547,6 @@ upd=function(){_origUpd();scheduleAutosave();};
       .then(data=>{
         applySettings(data.settings);
         if(data.notes)setNotes(data.notes);else setNotes('');
-        updateNotesPreview();
         currentSnapshotId=snapshotId;
         userBadge.textContent='📋 Snapshot di '+data.name;
         userBadge.style.display='inline';
@@ -573,7 +564,7 @@ upd=function(){_origUpd();scheduleAutosave();};
 function restoreLocalAutosave(){
   try{
     const saved=localStorage.getItem('bpr:autosave');
-    if(saved){const d=JSON.parse(saved);if(d.settings)applySettings(d.settings);if(d.notes!==undefined)setNotes(d.notes);else if(typeof d==='object'&&!d.settings)applySettings(d);updateNotesPreview();toast('Sessione locale ripristinata');}
+    if(saved){const d=JSON.parse(saved);if(d.settings)applySettings(d.settings);if(d.notes!==undefined)setNotes(d.notes);else if(typeof d==='object'&&!d.settings)applySettings(d);toast('Sessione locale ripristinata');}
   }catch(e){console.warn('Auto-restore failed:',e);}
 }
 
