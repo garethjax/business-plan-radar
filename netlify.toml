@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "https://empyrean-black-hole.fastapicloud.dev/api/:splat"
+  status = 200
+  force = true

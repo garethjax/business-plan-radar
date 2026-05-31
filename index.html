@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Plan Radar — Digital Matrix</title>
+<style>
+:root{
+  --bg:#f5f4f0;--surface:#ffffff;--surface2:#f0efe9;--border:#e0dfd8;--border-strong:#c8c7be;
+  --text:#1a1a18;--text-muted:#6b6b65;--text-hint:#9b9b93;
+  --good:#1D9E75;--warn:#BA7517;--bad:#A32D2D;--blue:#185FA5;
+  --pill-r-bg:#FAEEDA;--pill-r-tx:#633806;--pill-g-bg:#EAF3DE;--pill-g-tx:#27500A;--pill-b-bg:#E6F1FB;--pill-b-tx:#0C447C;
+  --badge-bg:#EAF3DE;--badge-tx:#27500A;
+  --info-bg:#EAF3DE;--info-tx:#27500A;
+  --radius:12px;--radius-md:8px;--radius-sm:6px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);padding:2rem 1rem;line-height:1.6;font-size:15px}
+.w{max-width:760px;margin:0 auto}
+header{margin-bottom:2rem}
+.brand{font-size:11px;color:var(--text-hint);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+h1{font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.subtitle{font-size:14px;color:var(--text-muted);margin-top:6px}
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+.sec-title{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem}
+.tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tab{font-size:13px;padding:6px 16px;border-radius:var(--radius-md);border:1px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--text-muted);transition:all .15s}
+.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-bottom:1rem}
+.m{background:var(--surface2);border-radius:var(--radius-md);padding:.75rem;text-align:center}
+.ml{font-size:11px;color:var(--text-muted);margin-bottom:3px;line-height:1.3}
+.mv{font-size:18px;font-weight:600;color:var(--text)}
+.ms{font-size:11px;color:var(--text-hint);margin-top:2px}
+.mv.good{color:var(--good)}.mv.warn{color:var(--warn)}.mv.bad{color:var(--bad)}
+.sr{display:flex;align-items:center;gap:8px;margin-bottom:.7rem}
+.sr label{font-size:13px;color:var(--text-muted);min-width:220px;line-height:1.3}
+.sr input[type=range]{flex:1;height:3px;background:var(--border);border-radius:2px;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.sr input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--text);border-radius:50%;cursor:pointer}
+.sr input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--text);border:none;border-radius:50%;cursor:pointer}
+.sr .v{font-size:13px;font-weight:600;min-width:80px;text-align:right;color:var(--text)}
+.grp{font-size:11px;font-weight:600;color:var(--text-hint);text-transform:uppercase;letter-spacing:.05em;margin:1.1rem 0 .65rem}
+.grp:first-of-type{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:6px 8px;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border);font-size:12px}
+td{padding:6px 8px;color:var(--text);border-bottom:1px solid var(--border)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.sh td{font-size:12px;font-weight:600;color:var(--text-muted);background:var(--surface2);padding-top:10px}
+tr.sub td{font-weight:600;background:var(--surface2)}
+tr.prof td{font-weight:600;border-top:2px solid var(--border-strong)}
+td.n.good{color:var(--good)}td.n.bad{color:var(--bad)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius-md);margin-right:4px;font-weight:500}
+.pill-r{background:var(--pill-r-bg);color:var(--pill-r-tx)}
+.pill-g{background:var(--pill-g-bg);color:var(--pill-g-tx)}
+.pill-b{background:var(--pill-b-bg);color:var(--pill-b-tx)}
+.product-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:var(--radius-md);font-weight:500;background:var(--badge-bg);color:var(--badge-tx);margin-left:8px}
+.ticket-box{background:var(--surface2);border-radius:var(--radius-md);padding:.875rem 1rem;font-size:13px;line-height:1.6}
+.ticket-box .tr{display:flex;justify-content:space-between;color:var(--text-muted)}
+.ticket-box .tr.tot{border-top:1px solid var(--border-strong);margin-top:6px;padding-top:6px;color:var(--text);font-weight:600}
+.ticket-box .tr span:last-child{font-variant-numeric:tabular-nums}
+.now-badge{background:var(--info-bg);color:var(--info-tx);border-radius:var(--radius-md);padding:6px 12px;font-size:12px;margin-bottom:1rem;display:inline-block;font-weight:500}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bl{font-size:12px;color:var(--text-muted);min-width:90px;text-align:right}
+.bt{flex:1;background:var(--surface2);border-radius:4px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:600;color:#fff}
+.cr{border-left:3px solid #EF9F27;padding-left:1rem}
+.cr p{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:.6rem}
+.cr p:last-child{margin-bottom:0}
+footer{text-align:center;font-size:11px;color:var(--text-hint);margin-top:1.5rem;letter-spacing:.08em;text-transform:uppercase}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem}
+.btn{font-size:13px;padding:6px 14px;border-radius:var(--radius-md);border:1px solid var(--border-strong);background:var(--surface);cursor:pointer;color:var(--text);transition:all .15s}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
+.toast{font-size:12px;color:var(--good);align-self:center;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="w">
+<header>
+  <p class="brand">Digital Matrix</p>
+  <h1>Business Plan — Radar</h1>
+  <p class="subtitle">Modello finanziario interattivo. Modifica i parametri per esplorare scenari pluriennali e break-even.</p>
+  <div class="toolbar">
+    <button class="btn primary" id="btn-export">↓ Esporta scenario (JSON)</button>
+    <button class="btn" id="btn-import">↑ Importa scenario</button>
+    <button class="btn" id="btn-reset">↺ Ripristina default</button>
+    <input type="file" id="file-import" accept="application/json,.json" hidden>
+    <span class="toast" id="toast"></span>
+  </div>
+</header>
+
+<div class="sec">
+  <div class="sec-title">Situazione attuale</div>
+  <div class="now-badge">Validazione in corso: 2 clienti paganti, 4 in presales</div>
+  <div class="ticket-box" id="ticket-box"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Pacchetto Radar <span class="product-badge">cliente + competitor inclusi</span></div>
+  <div class="sr"><label>Prezzo per punto vendita cliente (€)</label><input type="range" id="ppp" min="200" max="600" step="50" value="500"><span class="v" id="ppp-o">€500</span></div>
+  <div class="sr"><label>Location medie del cliente</label><input type="range" id="loc" min="1" max="15" step="1" value="2"><span class="v" id="loc-o">2</span></div>
+  <div class="sr"><label>Competitor inclusi (minimo 4)</label><input type="range" id="comp" min="2" max="8" step="1" value="4"><span class="v" id="comp-o">4</span></div>
+  <div class="sr"><label>Prezzo per competitor (€)</label><input type="range" id="compp" min="150" max="400" step="50" value="300"><span class="v" id="compp-o">€300</span></div>
+  <div class="sr"><label>% clienti con addon Gem/GPT</label><input type="range" id="gem" min="0" max="80" step="10" value="30"><span class="v" id="gem-o">30%</span></div>
+  <div class="sr"><label>Prezzo addon Gem (€ cad.)</label><input type="range" id="gemp" min="150" max="500" step="50" value="250"><span class="v" id="gemp-o">€250</span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Volumi e rinnovi</div>
+  <div class="sr"><label>Clienti commerciali anno 1 (lead gen)</label><input type="range" id="rr1" min="2" max="40" step="1" value="15"><span class="v" id="rr1-o">15</span></div>
+  <div class="sr"><label>Clienti direzionali/anno (socio — costo 0)</label><input type="range" id="dir" min="0" max="24" step="1" value="12"><span class="v" id="dir-o">12</span></div>
+  <div class="sr"><label>Crescita clienti anno 2 (%)</label><input type="range" id="rrg2" min="20" max="150" step="10" value="80"><span class="v" id="rrg2-o">+80%</span></div>
+  <div class="sr"><label>Crescita clienti anno 3 (%)</label><input type="range" id="rrg3" min="20" max="100" step="10" value="50"><span class="v" id="rrg3-o">+50%</span></div>
+  <div class="sr"><label>% clienti che rinnovano (retainer)</label><input type="range" id="renew" min="0" max="60" step="5" value="25"><span class="v" id="renew-o">25%</span></div>
+  <div class="sr"><label>Retainer = % annua del progetto</label><input type="range" id="renewpct" min="15" max="50" step="5" value="30"><span class="v" id="renewpct-o">30%</span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Struttura costi</div>
+
+  <div class="grp">Personale</div>
+  <div class="sr"><label>Operativo/analytics (€/mese, anno 1)</label><input type="range" id="an" min="500" max="3000" step="100" value="1000"><span class="v" id="an-o">€1.000/m</span></div>
+
+  <div class="grp">Marketing / commerciale</div>
+  <div class="sr"><label>Sito web / social / copy (€/mese)</label><input type="range" id="web" min="0" max="1000" step="50" value="400"><span class="v" id="web-o">€400/m</span></div>
+  <div class="sr"><label>Campagna lead generation (€/anno)</label><input type="range" id="mk" min="0" max="15000" step="500" value="14000"><span class="v" id="mk-o">€14.000/a</span></div>
+  <div class="sr"><label>Commerciale — fisso mensile (€)</label><input type="range" id="cf" min="500" max="3000" step="100" value="1500"><span class="v" id="cf-o">€1.500/m</span></div>
+  <div class="sr"><label>Commerciale — variabile su venduto (%)</label><input type="range" id="cv" min="5" max="20" step="1" value="15"><span class="v" id="cv-o">15%</span></div>
+
+  <div class="grp">Amministrative</div>
+  <div class="sr"><label>Software e tool (€/anno base)</label><input type="range" id="sw" min="500" max="6000" step="100" value="3000"><span class="v" id="sw-o">€3.000/a</span></div>
+  <div class="sr"><label>Commercialista (€/anno)</label><input type="range" id="acc" min="0" max="8000" step="500" value="4000"><span class="v" id="acc-o">€4.000/a</span></div>
+  <div class="sr"><label>Varie operative (€/anno)</label><input type="range" id="mi" min="500" max="3000" step="100" value="1000"><span class="v" id="mi-o">€1.000/a</span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Proiezioni pluriennali</div>
+  <div class="tabs">
+    <button class="tab active" data-y="1">Anno 1</button>
+    <button class="tab" data-y="2">Anno 2</button>
+    <button class="tab" data-y="3">Anno 3</button>
+  </div>
+  <div class="metrics" id="mbox"></div>
+  <div style="overflow-x:auto"><table><thead><tr><th>Voce</th><th class="n">Anno 1</th><th class="n">Anno 2</th><th class="n">Anno 3</th></tr></thead><tbody id="tbody"></tbody></table></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Break-even visivo</div>
+  <div id="bebars"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Critica del piano</div>
+  <div class="cr" id="critbox"></div>
+</div>
+
+<footer>Digital Matrix — Business Plan Radar</footer>
+</div>
+
+<script>
+let ay=1;
+const ids=['ppp','loc','comp','compp','gem','gemp','rr1','dir','rrg2','rrg3','renew','renewpct','cf','cv','an','web','sw','acc','mk','mi'];
+ids.forEach(id=>document.getElementById(id).addEventListener('input',upd));
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{ay=+b.dataset.y;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',+t.dataset.y===ay));upd();}));
+
+function g(id){return +document.getElementById(id).value}
+function fmt(n){return '€'+Math.round(n).toLocaleString('it-IT')}
+
+// --- Export / Import / Reset scenario (tutto in frontend, nessun server) ---
+const DEFAULTS=Object.fromEntries(ids.map(id=>[id,document.getElementById(id).value]));
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function exportScenario(){
+  const data={app:'business-plan-radar',version:2,savedAt:new Date().toISOString(),
+    settings:Object.fromEntries(ids.map(id=>[id,g(id)]))};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='radar-scenario-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+  toast('Scenario esportato');
+}
+
+function applySettings(s){
+  let applied=0;
+  ids.forEach(id=>{
+    if(s[id]==null)return;
+    const el=document.getElementById(id);
+    let v=+s[id];
+    if(isNaN(v))return;
+    // clamp ai limiti dello slider e rispetta lo step
+    v=Math.min(+el.max,Math.max(+el.min,v));
+    el.value=v;applied++;
+  });
+  upd();
+  return applied;
+}
+
+function importScenario(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      const s=data&&data.settings?data.settings:data; // accetta sia il wrapper che il solo oggetto settings
+      if(typeof s!=='object'||s===null)throw new Error('formato non valido');
+      const n=applySettings(s);
+      toast(n>0?'Scenario importato ('+n+' parametri)':'Nessun parametro valido nel file');
+    }catch(e){
+      toast('File non valido: '+e.message);
+    }
+  };
+  r.onerror=()=>toast('Errore di lettura del file');
+  r.readAsText(file);
+}
+
+document.getElementById('btn-export').addEventListener('click',exportScenario);
+document.getElementById('btn-import').addEventListener('click',()=>document.getElementById('file-import').click());
+document.getElementById('file-import').addEventListener('change',e=>{
+  const f=e.target.files[0];
+  if(f)importScenario(f);
+  e.target.value=''; // permette di re-importare lo stesso file
+});
+document.getElementById('btn-reset').addEventListener('click',()=>{applySettings(DEFAULTS);toast('Default ripristinati');});
+
+function ticketBase(){
+  const cliente=g('ppp')*g('loc');
+  const competitor=g('comp')*g('compp');
+  return {cliente,competitor,tot:cliente+competitor};
+}
+
+function compute(){
+  const gemPct=g('gem')/100,gemp=g('gemp');
+  const rr1=g('rr1'),dir=g('dir'),rrg2=g('rrg2')/100,rrg3=g('rrg3')/100;
+  const renewPct=g('renew')/100,renewShare=g('renewpct')/100;
+  const cf=g('cf'),cv=g('cv')/100,an=g('an'),web=g('web'),sw=g('sw'),acc=g('acc'),mk=g('mk'),mi=g('mi');
+
+  const tb=ticketBase();
+  const avgProject=tb.tot+gemPct*gemp;
+
+  // Anno 1: 15 commerciali + 12 direzionali. La crescita anno 2/3 agisce sul TOTALE,
+  // i direzionali restano fissi (capacita' del socio), il resto e' commerciale.
+  const tot1=rr1+dir;
+  const totals=[tot1,Math.round(tot1*(1+rrg2)),Math.round(tot1*(1+rrg2)*(1+rrg3))];
+  const comm=totals.map(t=>Math.max(0,t-dir));
+
+  return totals.map((nNew,i)=>{
+    const y=i+1;
+    const nComm=comm[i];
+    const gemRev=nNew*gemPct*gemp;
+    const projectRev=nNew*tb.tot+gemRev;
+    const prevClients=i>0?totals[i-1]:0;
+    const renewingClients=Math.round(prevClients*renewPct);
+    const retainerRev=renewingClients*avgProject*renewShare;
+    const revTot=projectRev+retainerRev;
+
+    const scaleOp=y===1?1:y===2?1.25:1.6;
+    const commF=cf*12;
+    // Variabile solo sul venduto commerciale: i direzionali sono a costo zero.
+    const commV=nComm*avgProject*cv;
+    const commTot=commF+commV;
+    const anY=an*12*scaleOp;
+    const webY=web*12;
+    const swY=sw*(y===1?1:y===2?1.2:1.5);
+    const accY=acc;
+    const mkY=mk*(y===1?1:y===2?1.4:1.8);
+    const miY=mi*(y===1?1:y===2?1.1:1.2);
+
+    const cTot=commTot+anY+webY+swY+accY+mkY+miY;
+    const ebitda=revTot-cTot;
+    const margin=revTot>0?ebitda/revTot*100:-100;
+    const beClients=cTot>0?cTot/tb.tot:0;
+
+    return {nNew,nComm,nDir:dir,renewingClients,gemRev,projectRev,retainerRev,revTot,commF,commV,commTot,anY,webY,swY,accY,mkY,miY,cTot,ebitda,margin,beClients,tb};
+  });
+}
+
+function upd(){
+  document.getElementById('ppp-o').textContent=fmt(g('ppp'));
+  document.getElementById('loc-o').textContent=g('loc')+' loc.';
+  document.getElementById('comp-o').textContent=g('comp');
+  document.getElementById('compp-o').textContent=fmt(g('compp'));
+  document.getElementById('gem-o').textContent=g('gem')+'%';
+  document.getElementById('gemp-o').textContent=fmt(g('gemp'));
+  document.getElementById('rr1-o').textContent=g('rr1');
+  document.getElementById('dir-o').textContent=g('dir');
+  document.getElementById('rrg2-o').textContent='+'+g('rrg2')+'%';
+  document.getElementById('rrg3-o').textContent='+'+g('rrg3')+'%';
+  document.getElementById('renew-o').textContent=g('renew')+'%';
+  document.getElementById('renewpct-o').textContent=g('renewpct')+'%';
+  document.getElementById('cf-o').textContent=fmt(g('cf'))+'/m';
+  document.getElementById('cv-o').textContent=g('cv')+'%';
+  document.getElementById('an-o').textContent=fmt(g('an'))+'/m';
+  document.getElementById('web-o').textContent=fmt(g('web'))+'/m';
+  document.getElementById('sw-o').textContent=fmt(g('sw'))+'/a';
+  document.getElementById('acc-o').textContent=fmt(g('acc'))+'/a';
+  document.getElementById('mk-o').textContent=fmt(g('mk'))+'/a';
+  document.getElementById('mi-o').textContent=fmt(g('mi'))+'/a';
+
+  const tb=ticketBase();
+  document.getElementById('ticket-box').innerHTML=
+    '<div class="tr"><span>Audit cliente ('+g('loc')+' loc. × '+fmt(g('ppp'))+')</span><span>'+fmt(tb.cliente)+'</span></div>'+
+    '<div class="tr"><span>Competitor ('+g('comp')+' × '+fmt(g('compp'))+')</span><span>'+fmt(tb.competitor)+'</span></div>'+
+    '<div class="tr tot"><span>Ticket base pacchetto</span><span>'+fmt(tb.tot)+'</span></div>';
+
+  const yrs=compute();
+  const yr=yrs[ay-1];
+  const mc=yr.ebitda>0?'good':yr.ebitda>-5000?'warn':'bad';
+
+  document.getElementById('mbox').innerHTML=
+    '<div class="m"><div class="ml">Nuovi clienti A'+ay+'</div><div class="mv">'+yr.nNew+'</div><div class="ms">'+yr.nComm+' comm. + '+yr.nDir+' direz.'+(yr.renewingClients>0?' · +'+yr.renewingClients+' rinnovi':'')+'</div></div>'+
+    '<div class="m"><div class="ml">Ricavi progetti</div><div class="mv good">'+fmt(yr.projectRev)+'</div><div class="ms">incl. Gem</div></div>'+
+    '<div class="m"><div class="ml">Ricavi retainer</div><div class="mv" style="color:var(--blue)">'+fmt(yr.retainerRev)+'</div></div>'+
+    '<div class="m"><div class="ml">Ricavi totali</div><div class="mv">'+fmt(yr.revTot)+'</div></div>'+
+    '<div class="m"><div class="ml">Costi totali</div><div class="mv warn">'+fmt(yr.cTot)+'</div></div>'+
+    '<div class="m"><div class="ml">EBITDA</div><div class="mv '+mc+'">'+fmt(yr.ebitda)+'</div><div class="ms">'+Math.round(yr.margin)+'% margine</div></div>'+
+    '<div class="m"><div class="ml">Break-even (clienti)</div><div class="mv">'+Math.ceil(yr.beClients)+'</div></div>';
+
+  const rows=[
+    ['sh','Ricavi','','',''],
+    ['','&nbsp;&nbsp;Pacchetti Radar (cliente + competitor)',...yrs.map(y=>fmt(y.nNew*y.tb.tot))],
+    ['','&nbsp;&nbsp;Addon Gem/GPT ('+g('gem')+'% clienti)',...yrs.map(y=>fmt(y.gemRev))],
+    ['','&nbsp;&nbsp;Retainer/rinnovi annuali',...yrs.map(y=>fmt(y.retainerRev))],
+    ['sub','Totale ricavi',...yrs.map(y=>fmt(y.revTot))],
+    ['sh','Costi — personale','','',''],
+    ['','&nbsp;&nbsp;Operativo/analytics',...yrs.map(y=>fmt(y.anY))],
+    ['sh','Costi — marketing/commerciale','','',''],
+    ['','&nbsp;&nbsp;Sito web / social / copy',...yrs.map(y=>fmt(y.webY))],
+    ['','&nbsp;&nbsp;Campagna lead generation',...yrs.map(y=>fmt(y.mkY))],
+    ['','&nbsp;&nbsp;Commerciale fisso',...yrs.map(y=>fmt(y.commF))],
+    ['','&nbsp;&nbsp;Commerciale variabile ('+g('cv')+'%)',...yrs.map(y=>fmt(y.commV))],
+    ['sh','Costi — amministrative','','',''],
+    ['','&nbsp;&nbsp;Software e tool',...yrs.map(y=>fmt(y.swY))],
+    ['','&nbsp;&nbsp;Commercialista',...yrs.map(y=>fmt(y.accY))],
+    ['','&nbsp;&nbsp;Varie operative',...yrs.map(y=>fmt(y.miY))],
+    ['sub','Totale costi',...yrs.map(y=>fmt(y.cTot))],
+    ['prof','EBITDA',...yrs.map(y=>fmt(y.ebitda))],
+    ['prof','Margine %',...yrs.map(y=>Math.round(y.margin)+'%')],
+  ];
+
+  let tbody='';
+  rows.forEach(r=>{
+    const cls=r[0],label=r[1],vals=r.slice(2);
+    if(cls==='prof'&&label==='EBITDA'){
+      tbody+='<tr class="prof"><td>'+label+'</td>'+yrs.map(y=>'<td class="n '+(y.ebitda>=0?'good':'bad')+'">'+fmt(y.ebitda)+'</td>').join('')+'</tr>';
+    } else {
+      tbody+='<tr class="'+cls+'"><td>'+label+'</td>'+vals.slice(0,3).map(v=>'<td class="n">'+v+'</td>').join('')+'</tr>';
+    }
+  });
+  document.getElementById('tbody').innerHTML=tbody;
+
+  const maxV=Math.max(...yrs.map(y=>Math.max(y.revTot,y.cTot)))*1.05||1;
+  let bars='';
+  ['Anno 1','Anno 2','Anno 3'].forEach((lbl,i)=>{
+    const rp=Math.round(yrs[i].revTot/maxV*100);
+    const cp=Math.round(yrs[i].cTot/maxV*100);
+    bars+='<div class="bar-row"><span class="bl">'+lbl+' ricavi</span><div class="bt"><div class="bf" style="width:'+rp+'%;background:var(--good)">'+(rp>18?fmt(yrs[i].revTot):'')+'</div></div><span style="font-size:12px;color:var(--text-muted)">'+(rp<=18?fmt(yrs[i].revTot):'')+'</span></div>'+
+      '<div class="bar-row"><span class="bl">'+lbl+' costi</span><div class="bt"><div class="bf" style="width:'+cp+'%;background:var(--warn)">'+(cp>18?fmt(yrs[i].cTot):'')+'</div></div><span style="font-size:12px;color:var(--text-muted)">'+(cp<=18?fmt(yrs[i].cTot):'')+'</span></div>';
+  });
+  document.getElementById('bebars').innerHTML=bars;
+
+  renderCritique(yrs);
+}
+
+function renderCritique(yrs){
+  const issues=[];
+  const tb=ticketBase();
+  const rr1=g('rr1'),cf=g('cf');
+
+  if(tb.tot>=1800&&tb.tot<=3000){
+    issues.push({t:'g',m:'Ticket base ('+fmt(tb.tot)+') in linea con il posizionamento target: prezzo a punto vendita ('+fmt(g('ppp'))+') × '+g('loc')+' sedi + '+g('comp')+' competitor. I competitor inclusi spingono il pacchetto ben sopra la soglia psicologica dei 1.000€, coerente con il "non vendi recensioni, vendi posizionamento competitivo".'});
+  } else if(tb.tot<1800){
+    issues.push({t:'b',m:'Ticket base ('+fmt(tb.tot)+') sotto i ~2.000€ di riferimento. Va bene per clienti mono-sede o competitor al minimo, ma sui clienti tipo (2 sedi, 4 competitor) il ticket atteso è più alto: occhio a non sottoprezzare la proposta.'});
+  } else {
+    issues.push({t:'b',m:'Ticket base '+fmt(tb.tot)+': sopra la fascia di riferimento. Ha senso su clienti multi-sede o con molti competitor, ma verifica che i lead generati dalla campagna reggano questo prezzo medio.'});
+  }
+
+  issues.push({t:'g',m:'Struttura corretta dal punto di vista commerciale: i competitor non sono un addon ma il cuore della proposta. L\'audit del cliente da solo ('+fmt(tb.cliente)+') è l\'esca, i '+g('comp')+' competitor ('+fmt(tb.competitor)+') sono il valore. Questo difende il prezzo: il cliente non confronta più "300€ per leggere le mie recensioni" ma "un quadro competitivo completo".'});
+
+  const retShare=yrs[1].revTot>0?yrs[1].retainerRev/yrs[1].revTot*100:0;
+  if(retShare<15){
+    issues.push({t:'r',m:'Il retainer pesa solo il '+Math.round(retShare)+'% dei ricavi in anno 2. Il modello resta fortemente dipendente dall\'acquisizione di nuovi clienti ogni anno (ricavo one-shot). È il limite strutturale di questo business: ogni gennaio riparti quasi da zero. Alzare il tasso di rinnovo o la quota annuale è la leva più importante per la sostenibilità di lungo periodo.'});
+  } else {
+    issues.push({t:'g',m:'Il retainer porta il '+Math.round(retShare)+'% dei ricavi in anno 2: inizia a costruire una base ricorrente che riduce la dipendenza dall\'acquisizione continua.'});
+  }
+
+  if(yrs[0].ebitda<0&&yrs[1].ebitda>0){
+    issues.push({t:'b',m:'Anno 1 sostanzialmente a pareggio ('+fmt(yrs[0].ebitda)+'), anno 2 in utile ('+fmt(yrs[1].ebitda)+'). Serve solo una piccola liquidità di avvio (~'+fmt(Math.abs(yrs[0].ebitda))+') per coprire lo sfasamento incassi/campagna: i '+yrs[0].nDir+' clienti direzionali a costo zero tengono in piedi il primo anno mentre la lead gen entra a regime.'});
+  } else if(yrs[0].ebitda>=0){
+    issues.push({t:'g',m:'Anno 1 già in utile ('+fmt(yrs[0].ebitda)+'). Con i competitor inclusi il ticket più alto rende il modello autofinanziabile da subito.'});
+  } else {
+    issues.push({t:'r',m:'Due anni in perdita. Rivedi il fisso commerciale o accelera l\'acquisizione: con questo ticket il break-even è di '+Math.ceil(yrs[0].beClients)+' clienti/anno.'});
+  }
+
+  const dir=g('dir');
+  if(dir>0){
+    issues.push({t:'g',m:'I '+dir+' clienti direzionali/anno portati dal socio sono a costo di acquisizione zero (nessuna campagna, nessuna variabile): valgono circa '+fmt(yrs[0].nDir*(ticketBase().tot+g('gem')/100*g('gemp')))+' di ricavo "pulito" in anno 1. Sono la spina dorsale del primo anno mentre la macchina lead gen si roda.'});
+  }
+
+  const fissoRatio=yrs[0].revTot>0?(cf*12)/yrs[0].revTot*100:100;
+  if(fissoRatio>40){
+    issues.push({t:'r',m:'Il fisso commerciale ('+fmt(cf*12)+'/anno, due figure: socio + chi segue i lead) pesa il '+Math.round(fissoRatio)+'% dei ricavi anno 1. È sostenibile solo se i '+yrs[0].nComm+' clienti da lead gen chiudono davvero: tieni d\'occhio il costo per acquisizione (campagna '+fmt(g('mk'))+' / '+yrs[0].nComm+' clienti commerciali = '+fmt(g('mk')/Math.max(1,yrs[0].nComm))+' a cliente).'});
+  }
+
+  const projPerYear=yrs[0].nNew;
+  const oreMin=Math.round(projPerYear*(g('comp')+1)*1.5);
+  const oreMax=Math.round(projPerYear*(g('comp')+1)*2);
+  issues.push({t:'b',m:'Nota di capacità: '+projPerYear+' progetti in anno 1 con '+g('comp')+' competitor ciascuno significano molte analisi semantiche. A 1-2 ore l\'una sono circa '+oreMin+'-'+oreMax+' ore/anno solo di produzione: verifica che l\'operativo a '+fmt(g('an'))+'/mese basti, o automatizza la pipeline competitor.'});
+
+  let html='';
+  issues.forEach(o=>{
+    const pc=o.t==='r'?'pill-r':o.t==='g'?'pill-g':'pill-b';
+    const pl=o.t==='r'?'Attenzione':o.t==='g'?'OK':'Nota';
+    html+='<p><span class="pill '+pc+'">'+pl+'</span>'+o.m+'</p>';
+  });
+  document.getElementById('critbox').innerHTML=html;
+}
+
+upd();
+</script>
+</body>
+</html>
